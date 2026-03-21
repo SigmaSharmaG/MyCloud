@@ -1,15 +1,15 @@
 import React from 'react'
-import {Link, NavLink} from 'react-router-dom'
-import Login from './login'
+import { Link, NavLink } from 'react-router-dom'
+import Login from './Login'
 
 const Signup = () => {
   return (
-    
-    
-     <div className="min-h-screen  flex items-center justify-center bg-gray-100">
-      
+
+
+    <div className="min-h-screen  flex items-center justify-center bg-gray-100">
+
       <div className="bg-white/90 backdrop-blur-md rounded-xl shadow-2xl w-full max-w-sm p-8">
-        
+
         {/* Header */}
         <p className="text-sm text-gray-400 text-center">
           Please enter your details
@@ -19,9 +19,9 @@ const Signup = () => {
           Welcome back
         </h2>
 
-        
+
         <form className="mt-4">
-          
+
           {/* Email */}
           <input
             type="email"
@@ -78,9 +78,9 @@ const Signup = () => {
         <p className="text-center text-sm text-gray-500 mt-4">
           {/* Don’t have an account?{" "} */}
           <Link to='/login' className="text-blue-500 hover:underline">
-          Login-IN
-            </Link>
-          
+            Login-IN
+          </Link>
+
         </p>
 
       </div>
