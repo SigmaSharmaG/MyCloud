@@ -10,9 +10,13 @@ const app = express();
 
 app.use(express.json());
 
-const PORT = 4000;
+app.use("/api/auth",require("./routes/authRoutes"));
+
+const PORT = process.env.PORT || 4000;
 
 
+
+// Starting server
 app.listen(PORT,()=>{
     console.log(`App started listening at PORT : ${PORT}`);
 })
