@@ -1,10 +1,61 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import Login from './Login'
-
+import { toast } from "react-toastify";
 const Signup = () => {
-  return (
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+  })
 
+  const handleChange = (event) => {
+    setFormData(
+      {
+        ...formData,
+        [event.target.name]: event.target.value,
+      }
+    )
+  }
+
+
+  const handleSignUp = async (event) => {
+    event.preventDefault();
+
+    // Call API
+    try {
+      const res = await fetch("http://localhost:4000/api/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(formData)
+      });
+
+      const data = await res.json();
+      console.log(data)
+      if (res.ok) {
+        // alert("Signup successful");
+        toast.success("Signup successful");
+        setFormData({
+          name: "",
+          email: "",
+          password: "",
+        })
+      } else {
+        // alert(data.message);
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.log(error);
+      // alert("Something went wrong ");
+      toast.error("Something went wrong")
+    }
+  };
+
+
+
+  return (
 
     <div className="min-h-screen  flex items-center justify-center bg-gray-100">
 
@@ -20,19 +71,35 @@ const Signup = () => {
         </h2>
 
 
-        <form className="mt-4">
+        <form className="mt-4" onSubmit={handleSignUp}>
+
+          {/* Name */}
+          <input
+            type="text"
+            name="name"
+            value={formData.name}
+            placeholder="Name"
+            onChange={handleChange}
+            className="w-full mt-2 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
 
           {/* Email */}
           <input
             type="email"
+            name="email"
+            value={formData.email}
             placeholder="Email address"
+            onChange={handleChange}
             className="w-full mt-2 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
 
           {/* Password */}
           <input
             type="password"
+            value={formData.password}
+            name="password"
             placeholder="Password"
+            onChange={handleChange}
             className="w-full mt-4 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
 
@@ -51,6 +118,7 @@ const Signup = () => {
           {/* Button */}
           <button
             type="submit"
+            // onClick={handleSignIn}
             className="w-full mt-6 bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition duration-200"
           >
             Sign up
