@@ -15,7 +15,7 @@ const Signup = () => {
           Please enter your details
         </p>
 
-        <h2 className="text-2xl font-bold text-center !text-gray-800 mt-2">
+        <h2 className="text-2xl font-bold text-center text-gray-800! mt-2">
           Welcome back
         </h2>
 
@@ -59,9 +59,9 @@ const Signup = () => {
 
         {/* Divider */}
         <div className="flex items-center my-4">
-          <div className="flex-grow h-px bg-gray-300"></div>
+          <div className="grow h-px bg-gray-300"></div>
           <span className="px-2 text-sm text-gray-400">OR</span>
-          <div className="flex-grow h-px bg-gray-300"></div>
+          <div className="grow h-px bg-gray-300"></div>
         </div>
 
         {/* Google Button */}

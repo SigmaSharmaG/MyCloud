@@ -10,7 +10,7 @@ const Login = () => {
         <div className="bg-white/90 backdrop-blur-md rounded-xl shadow-2xl w-full max-w-sm p-8">
 
           {/* Title */}
-          <h2 className="text-2xl font-bold text-center !text-black opacity-100">
+          <h2 className="text-2xl font-bold text-center text-black! opacity-100">
             Login
           </h2>
 
