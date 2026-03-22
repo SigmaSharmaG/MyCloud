@@ -32,8 +32,7 @@ const readFolder = (dirPath, basePath = "") => {
     return { folders, files };
 };
 
-
-
+// List Files & Folders
 exports.listFiles = async (req, res) => {
     try {
         const userId = req.user.id;
@@ -57,3 +56,13 @@ exports.listFiles = async (req, res) => {
         res.status(500).json({ message: "Error reading files", error: err.message });
     }
 };
+
+// TODO
+
+// Delete File
+
+// Delete Folder
+
+// Rename file
+
+// Rename folder

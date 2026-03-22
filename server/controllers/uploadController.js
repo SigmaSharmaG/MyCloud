@@ -1,6 +1,7 @@
 const File = require("../models/File");
 const Folder = require("../models/Folder");
 
+// To upload file
 exports.uploadFile = async (req,res) => {
     try{
         const file = req.file;
