@@ -42,6 +42,9 @@ Thumbs.db
 # Optional: coverage
 # =========================
 coverage/
+<<<<<<< HEAD
 
 # Cloud storage
 storage/
+
+
