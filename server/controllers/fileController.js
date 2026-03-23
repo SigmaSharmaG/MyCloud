@@ -59,10 +59,239 @@ exports.listFiles = async (req, res) => {
 
 // TODO
 
+// Create folder
+exports.createFolder = async (req,res) => {
+    try{
+        const userId = req.user.id;
+        const {folderPath,folderName} = req.body;
+
+        if (!folderName){
+            return res.status(400).json({
+                success:false,
+                message:"Folder name is required",
+            })
+        }
+
+        const basePath = path.join("storage", userId, folderPath || "");
+
+        // full new folder path
+        const fullPath = path.join(basePath, folderName);
+
+        // Check if path already exist
+        if (fs.existsSync(fullPath)){
+            return res.status(400).json({
+                success:true,
+                message:"Folder already exists"
+            })
+        }
+
+        // create folder
+        fs.mkdirSync(fullPath, { recursive: true });
+
+        return res.status(200).json({
+            success:true,
+            message:"Folder created successfully"
+        })
+
+    }
+    catch(error){
+
+    }
+}
+
 // Delete File
+exports.deleteFile = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const filePath = req.body.path;
+
+        // If there is no filepath given
+        if (!filePath) {
+            return res.status(400).json({
+                success: false,
+                message: "File path is required"
+            })
+        }
+
+        // Creating fullpath
+        const fullPath = path.join("storage", userId, filePath);
+
+        // Check whether file exist or not
+        if (!fs.existsSync(fullPath)) {
+            return res.status(404).json({
+                message: "File not found"
+            });
+        }
+
+        // Delete file
+        fs.unlinkSync(fullPath);
+
+        return res.status(201).json({
+            success: true,
+            message: "File deleted successfully"
+        });
+
+
+    }
+    catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: error.message,
+
+        })
+    }
+}
 
 // Delete Folder
+exports.deleteFolder = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const folderPath = req.body.path;
+
+        // If no folder path is given
+        if (!folderPath) {
+            return res.status(400).json({
+                success: false,
+                message: "Folder path is required"
+            })
+        }
+
+        // Creating fullpath
+        const fullPath = path.join("storage", userId, filePath);
+
+        // Check folder exist or not
+        if (!fs.existsSync(fullpath)) {
+            return res.status(404).json({
+                success: false,
+                message: "Folder not found"
+            })
+
+        }
+
+        // Delete folder recurively
+        fs.rmSync(fullPath, { recursive: true, force: true });
+
+        return res.status(200).json({
+            success: true,
+            message: "Folder deleted successfully",
+        })
+
+
+    }
+    catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: error.message,
+
+        })
+    }
+}
+
 
 // Rename file
+exports.renameFile = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const { oldPath, newName } = req.body;
+
+        // If path is missing
+        if (!oldPath || !newName) {
+            return res.status(400).json({
+                success: true,
+                message: "Old path and new name are required"
+            });
+
+        }
+
+        // Getting full path
+        const oldFullPath = path.join("storage", userId, oldPath);
+
+        // check file exists
+        if (!fs.existsSync(oldFullPath)) {
+            return res.status(404).json({
+                success: false,
+                message: "File not found"
+            });
+        }
+
+        // Get directory
+        const dir = path.dirname(oldFullPath);
+        const ext = path.extname(oldFullPath);
+        const newFullPath = path.join(dir, newName + ext);
+
+        // rename
+        fs.renameSync(oldFullPath, newFullPath);
+
+        return res.status(200).json({
+            success: true,
+            message: "File renamed successfully",
+        })
+
+    }
+    catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: error.message,
+
+        })
+    }
+}
 
 // Rename folder
+exports.renameFolder = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const { oldFolderPath, newFolderName } = req.body;
+
+        // If folder path is not given
+        if (!oldFolderPath || !newFolderName) {
+            return res.status(400).json({
+                success: false,
+                message: "Old path and new name are required"
+            })
+        }
+
+        const oldFullPath = path.join("storage", userId, oldFolderPath);
+
+        // Check if folder exist or not
+        if (!fs.existsSync(oldFullPath)) {
+            return res.status(404).json({
+                success: false,
+                message: "Folder not found"
+            })
+        }
+
+        // get parent directory
+        const parentDir = path.dirname(oldFullPath);
+
+        // new path
+        const newFullPath = path.join(parentDir, newFolderName);
+
+        // Check if the folder name already parent
+        if (fs.existsSync(newFullPath)) {
+            return res.status(400).json({
+                success: false,
+                message: "Folder with this name already exists"
+            });
+        }
+
+        // Rename folder
+        fs.renameSync(oldFullPath, newFullPath);
+
+        return res.status(200).json({
+            message: "Folder renamed successfully",
+            newPath: path.join(path.dirname(oldPath), newName)
+        });
+
+    }
+    catch(error){
+        return res.status(500).json({
+            success: false,
+            message: error.message,
+
+        })
+    }
+
+
+}
+
