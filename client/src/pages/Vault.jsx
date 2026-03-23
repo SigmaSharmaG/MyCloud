@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import Navbar from '../components/Navbar.jsx'
 import TableRow from '../components/TableRow.jsx'
 import FolderHeader from '../components/FolderHeader.jsx'
+
 const Vault = () => {
     const files = [
         { type: 'folder', name: 'Projects', owner: 'Garvit', size: '1 KB', date: 'Mar 21, 2026' },
@@ -13,9 +14,11 @@ const Vault = () => {
     const folderName = "Documents"; // dynamic later
 
     const handleRefresh = () => {
-    console.log("Refreshing data...");
-    // call API again here
-  };
+        console.log("Refreshing data...");
+        // call API again here
+    };
+
+
     return (
         <div>
             <Navbar />
