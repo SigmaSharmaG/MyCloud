@@ -157,10 +157,10 @@ exports.deleteFolder = async (req, res) => {
         }
 
         // Creating fullpath
-        const fullPath = path.join("storage", userId, filePath);
+        const fullPath = path.join("storage", userId, folderPath);
 
         // Check folder exist or not
-        if (!fs.existsSync(fullpath)) {
+        if (!fs.existsSync(fullPath)) {
             return res.status(404).json({
                 success: false,
                 message: "Folder not found"
@@ -238,36 +238,52 @@ exports.renameFile = async (req, res) => {
 }
 
 // Rename folder
+
+const moveFolder = (src, dest) => {
+    fs.mkdirSync(dest, { recursive: true });
+
+    const items = fs.readdirSync(src);
+
+    for (const item of items) {
+        const srcPath = path.join(src, item);
+        const destPath = path.join(dest, item);
+
+        const stats = fs.statSync(srcPath);
+
+        if (stats.isDirectory()) {
+            moveFolder(srcPath, destPath);
+        } else {
+            fs.copyFileSync(srcPath, destPath);
+        }
+    }
+
+    fs.rmSync(src, { recursive: true, force: true });
+};
+
 exports.renameFolder = async (req, res) => {
     try {
         const userId = req.user.id;
         const { oldFolderPath, newFolderName } = req.body;
 
-        // If folder path is not given
         if (!oldFolderPath || !newFolderName) {
             return res.status(400).json({
                 success: false,
                 message: "Old path and new name are required"
-            })
+            });
         }
 
         const oldFullPath = path.join("storage", userId, oldFolderPath);
 
-        // Check if folder exist or not
         if (!fs.existsSync(oldFullPath)) {
             return res.status(404).json({
                 success: false,
                 message: "Folder not found"
-            })
+            });
         }
 
-        // get parent directory
         const parentDir = path.dirname(oldFullPath);
-
-        // new path
         const newFullPath = path.join(parentDir, newFolderName);
 
-        // Check if the folder name already parent
         if (fs.existsSync(newFullPath)) {
             return res.status(400).json({
                 success: false,
@@ -275,23 +291,26 @@ exports.renameFolder = async (req, res) => {
             });
         }
 
-        // Rename folder
-        fs.renameSync(oldFullPath, newFullPath);
+        // Rename first
+        try {
+            fs.renameSync(oldFullPath, newFullPath);
+        } catch (err) {
+            console.log("Rename failed, using fallback:", err.message);
+
+            // 🔥 fallback (always works)
+            moveFolder(oldFullPath, newFullPath);
+        }
 
         return res.status(200).json({
+            success: true,
             message: "Folder renamed successfully",
-            newPath: path.join(path.dirname(oldPath), newName)
+            newPath: path.join(path.dirname(oldFolderPath), newFolderName)
         });
 
-    }
-    catch(error){
+    } catch (error) {
         return res.status(500).json({
             success: false,
-            message: error.message,
-
-        })
+            message: error.message
+        });
     }
-
-
-}
-
+};
