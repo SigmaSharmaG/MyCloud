@@ -2,7 +2,7 @@ import React, { useState,useEffect } from "react";
 import Navbar from '../components/Navbar.jsx'
 import TableRow from '../components/TableRow.jsx'
 import FolderHeader from '../components/FolderHeader.jsx'
-
+import axios from "axios";
 const Vault = () => {
     const files = [
         { type: 'folder', name: 'Projects', owner: 'Garvit', size: '1 KB', date: 'Mar 21, 2026' },
@@ -18,6 +18,41 @@ const Vault = () => {
         // call API again here
     };
 
+    // const handleUpload = () => {
+
+    // }
+
+    const handleAddFolder = () => {
+
+    }
+
+    const handleUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const token = localStorage.getItem("token");
+      console.log(token);
+      const res = await axios.post(
+        "http://localhost:4000/api/upload/file?folderPath=college/KIET",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      console.log(res.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
 
     return (
         <div>
@@ -29,6 +64,8 @@ const Vault = () => {
                     searchQuery={searchQuery}
                     setSearchQuery={setSearchQuery}
                     onRefresh={handleRefresh}
+                    onUpload={handleUpload}
+                    onAddFolder={handleAddFolder}
                 />
 
                 {/* Example content

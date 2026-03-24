@@ -1,6 +1,15 @@
-import React from "react";
-import { FaSyncAlt } from 'react-icons/fa';
-function FolderHeader({ folderName, searchQuery, setSearchQuery,onRefresh }) {
+import React,{ useRef } from "react";
+import { FaSyncAlt,FaFileUpload,FaFolderPlus } from 'react-icons/fa';
+import axios from "axios";
+function FolderHeader({ folderName, searchQuery, setSearchQuery,onRefresh,onUpload,onAddFolder }) {
+  const fileInputRef = useRef();
+
+  const handleUploadClick = () => {
+    fileInputRef.current.click(); // open file picker
+  };
+
+
+
   return (
     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-white rounded-2xl p-4">
       
@@ -32,6 +41,33 @@ function FolderHeader({ folderName, searchQuery, setSearchQuery,onRefresh }) {
           title="Refresh"
         >
             <FaSyncAlt />
+        </button>
+        {/* Upload Button */}
+
+
+        <button
+          onClick={handleUploadClick}
+          className="p-2 bg-gray-400 text-white rounded-3xl hover:bg-blue-700 transition duration-200"
+          title="Upload file"
+        >
+            <FaFileUpload />
+        </button>
+
+        {/*Hidden Input */}
+        <input
+          type="file"
+          ref={fileInputRef}
+          onChange={onUpload}
+          style={{ display: "none" }}
+        />
+
+        {/* Add folder Button */}
+        <button
+          onClick={onAddFolder}
+          className="p-2 bg-gray-400 text-white rounded-3xl hover:bg-blue-700 transition duration-200"
+          title="Add folder"
+        >
+            <FaFolderPlus />
         </button>
       </div>
     </div>
