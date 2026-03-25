@@ -18,7 +18,7 @@ const TableRow = ({ type, name, owner,size, date }) => {
       <div className="w-32 text-gray-500 text-sm">{owner}</div>
 
       {/* Size */}
-      <div className="w-32 text-gray-500 text-sm">{size}</div>
+      <div className="w-32 text-gray-500 text-sm">{ size ? `${(size / 1024).toFixed(2)} KB`:""}</div>
 
       {/* Date Modified */}
       <div className="w-32 text-gray-500 text-sm">{date}</div>
