@@ -11,7 +11,7 @@ const TableRow = ({ type, name, owner,size, date }) => {
         ) : (
           <FaFileAlt className="text-blue-500 text-xl" />
         )}
-        <span className="font-medium text-sm text-gray-800">{name}</span>
+        <span className="font-medium text-sm text-gray-800">{type=='folder' ? name : name.substring(14,name.length)}</span>
       </div>
 
       {/* Owner */}

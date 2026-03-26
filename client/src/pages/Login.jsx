@@ -40,6 +40,8 @@ const Login = () => {
           email: "",
           password: "",
         })
+
+        // create user storage if not exist
       }
       else{
         toast.error(data.message);

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, } from "react";
+import React, { useState, useEffect,useRef } from "react";
 import Navbar from '../components/Navbar.jsx'
 import TableRow from '../components/TableRow.jsx'
 import FolderHeader from '../components/FolderHeader.jsx'
@@ -23,6 +23,8 @@ const Vault = () => {
     const [currentFolder, setCurrentFolder] = useState(null);
     const [history, setHistory] = useState([]);
 
+    const containerRef = useRef(null);
+
     const getAllFiles = (folder) => {
         let allFiles = [...folder.files];
 
@@ -33,8 +35,36 @@ const Vault = () => {
         return allFiles;
     };
 
+    const handleFileLoad = async () => {
+        try {
+            const path = '';
+            const token = localStorage.getItem("token"); // 🔥 get token
+
+            const res = await axios.get(
+                "http://localhost:4000/api/files/",
+                {
+                    params: { folderPath: path },
+                    headers: {
+                        Authorization: `Bearer ${token}` // 🔥 attach token
+                    }
+                }
+            );
+            console.log("Hello", res.data)
+
+            return res.data;
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
     useEffect(() => {
-        const apiData = {
+        if (containerRef.current) {
+            containerRef.current.scrollTop = containerRef.current.scrollHeight;
+        }
+    }, [currentFolder]);
+
+    useEffect(() => {
+        const apiData2 = {
             "name": "root",
             "path": "",
             "folders": [
@@ -160,19 +190,21 @@ const Vault = () => {
                 }
             ]
         }
+        // const res = handleFileLoad();
+        // // console.log(res);
+        // const apiData = res;
 
-        // const loadData = async () => {
-        //     const result = await handleFileLoad();
-        //     setData(result); // ✅ correct
+        // setRoot(apiData);
+        // setCurrentFolder(apiData);
 
-        //     setRoot(result);
-        //     setCurrentFolder(result);
-        // };
+        const loadData = async () => {
+            const data = await handleFileLoad();
 
-        // loadData();
+            setRoot(data);
+            setCurrentFolder(data);
+        };
 
-        setRoot(apiData);
-        setCurrentFolder(apiData);
+        loadData();
     }, []);
 
     // useEffect(() => {
@@ -235,29 +267,20 @@ const Vault = () => {
     const handleRefresh = () => {
         console.log("Refreshing data...");
         // call API again here
+        const loadData = async () => {
+            const data = await handleFileLoad();
+
+            setRoot(data);
+            setCurrentFolder(data);
+
+
+        };
+
+        loadData();
+        console.log("After refresh", currentFolder)
     };
 
-    const handleFileLoad = async () => {
-        try {
-            const path = '';
-            const token = localStorage.getItem("token"); // 🔥 get token
 
-            const res = await axios.get(
-                "http://localhost:4000/api/files/",
-                {
-                    params: { folderPath: encodeURIComponent(path) },
-                    headers: {
-                        Authorization: `Bearer ${token}` // 🔥 attach token
-                    }
-                }
-            );
-            console.log("Hello",res.data)
-
-            return res.data;
-        } catch (err) {
-            console.error(err);
-        }
-    }
 
 
     // Handles new folder creation
@@ -277,6 +300,9 @@ const Vault = () => {
             });
             setNewFolderName("");
             displayNewFolderModal();
+            await handleRefresh();
+
+            // toast.success("New file uploaded created");
 
             toast.success("New folder created");
             console.log(res);
@@ -309,7 +335,7 @@ const Vault = () => {
             const token = localStorage.getItem("token");
             console.log(token);
             const res = await axios.post(
-                "http://localhost:4000/api/upload/file?folderPath=college/KIET",
+                "http://localhost:4000/api/upload/file?folderPath=",
                 formData,
                 {
                     headers: {
@@ -319,7 +345,10 @@ const Vault = () => {
                 }
             );
 
-            console.log(res.data);
+            // console.log(res.data);
+            await handleRefresh();
+
+            toast.success("New file uploaded created");
         } catch (err) {
             console.error(err);
         }
@@ -384,7 +413,9 @@ const Vault = () => {
                 </div>
             )}
 
-            <div className="w-full mx-auto mt-2 px-0 bg-yellow-500 h-[80vh] overflow-y-auto">
+            {/* File explorer */}
+            <div ref={containerRef}
+    className="w-full mx-auto mt-2 px-0 bg-white h-[80vh] overflow-y-auto">
                 {/* <div className="w-full mx-auto mt-2 px-0 bg-yellow-500 h-[80vh] overflow-y-auto pb-10"></div>                 */}
                 <div className="flex px-10 py-2 font-semibold text-gray-600 sticky top-0 z-10 bg-white">
                     <div className="flex-1">Name</div>
@@ -393,8 +424,9 @@ const Vault = () => {
                     <div className="w-32">Date Modified</div>
                     <div className="w-10"></div>
                 </div>
+                <div className="mb-10 pb-20">
 
-                {/* {files.map((file, index) => (
+                    {/* {files.map((file, index) => (
                     <TableRow
                         key={index}
                         type={file.type}
@@ -405,28 +437,32 @@ const Vault = () => {
                     />
                 ))} */}
 
-                {/* 🔥 Folders FIRST */}
-                {currentFolder.folders.map((folder) => (
-                    <TableRow
-                        key={folder.path}
-                        type="folder"
-                        name={folder.name}
-                        owner={"You"}
-                        onClick={() => openFolder(folder)}
+                    {/*Folders FIRST */}
+                    {currentFolder.folders.map((folder) => (
+                        <TableRow
+                            key={folder.path}
+                            type="folder"
+                            name={folder.name}
+                            owner={"You"}
+                            onClick={() => openFolder(folder)}
 
-                    />
-                ))}
+                        />
+                    ))}
 
-                {/* 🔥 Files */}
-                {currentFolder.files.map((file) => (
-                    <TableRow
-                        key={file.path}
-                        type={file.type}
-                        name={file.name}
-                        owner={"You"}
-                        size={file.size}
-                    />
-                ))}
+                    {/*Files */}
+
+                    {console.log(currentFolder.files)}
+                    {currentFolder.files.map((file) => (
+                        <TableRow
+                            key={file.path}
+                            type={file.type}
+                            name={file.name}
+                            owner={"You"}
+                            size={file.size}
+                            
+                        />
+                    ))}
+                </div>
             </div>
 
         </div>
