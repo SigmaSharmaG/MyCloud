@@ -17,7 +17,7 @@ function Navbar() {
           <div className="hidden md:flex space-x-6">
             <Link to="/my-vault" className="hover:text-blue-200">My Vault</Link>
             <Link to="/shared-with-me" className="hover:text-blue-200">Shared With Me</Link>
-            <Link to="/profile" className="hover:text-blue-200">Profile</Link>
+            <Link to="/Profile" className="hover:text-blue-200">Profile</Link>
             <button className="hover:text-blue-200">Logout</button>
           </div>
 

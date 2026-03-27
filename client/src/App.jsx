@@ -1,28 +1,34 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
 import './App.css'
 import Login from './pages/Login'
 import { Route,Routes } from 'react-router-dom'
 import Signup from './pages/Signup'
 import Home from './pages/Home'
-
 import Vault from './pages/Vault'
+import Price from './pages/Price'
+import Contact from './pages/Contact'
+import Feature from './pages/Feature'
+import Security from './pages/Security'
+import Profile from './pages/Profile'
 
 
 function App() {
-  const [count, setCount] = useState(0)
 
   return (
     <>
+    
     <Routes>
+      
       <Route path='/login' element={<Login/>}/>
+      <Route path='/' element={<Home/>}/>
       <Route path='/signup' element={<Signup/>}/>
       <Route path='/Home' element={<Home/>}/>
-      <Route path='/Home' element={<Login/>}/>
+      <Route path='/Feature' element={<Feature/>}/>
       <Route path='/Vault' element={<Vault/>}/>
-
+      <Route path='/Price' element={<Price/>}/>
+      <Route path='/Contact' element={<Contact/>}/>
+      <Route path='/Security' element={<Security/>}/>
+      <Route path='/Profile' element={<Profile/>}/>
     </Routes>
     </>
   )

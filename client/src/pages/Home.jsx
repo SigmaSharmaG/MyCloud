@@ -2,38 +2,13 @@ import React from 'react'
 import { Link } from 'react-router-dom';
 import { FaLock, FaShareAlt, FaComments, FaFileSignature } from "react-icons/fa";
 
+import Navbar2 from '../components/Navbar2.jsx';
 const Home = () => {
   
   return (
     <div className="bg-blue-600 flex flex-col min-h-screen text-white ">
       
-      {/* Navbar */}
-      <nav className="flex items-center justify-between px-16 py-4 ml-3">
-        {/* Logo */}
-        <div className="text-xl font-bold flex items-center gap-2">
-          <span className="bg-white text-blue-600 px-2 py-1 rounded">∑</span>
-          MY CLOUD
-        </div>
-
-        {/* Links */}
-        <ul className="hidden md:flex gap-20 text-sm ">
-          <li className="hover:text-gray-200 cursor-pointer">Home</li>
-          <li className="hover:text-gray-200 cursor-pointer">Features</li>
-          <li className="hover:text-gray-200 cursor-pointer">Pricing</li>
-          <li className="hover:text-gray-200 cursor-pointer">Security</li>
-          <li className="hover:text-gray-200 cursor-pointer">Contact</li>
-        </ul>
-
-        {/* Menu Icon */}
-        <div className="mr-1">
-        <Link  to="/login"className="border border-white px-4 mx-5 py-2 rounded hover:bg-white hover:text-blue-600 transition">
-          Login
-        </Link>
-        <Link to="/signup" className="border border-white px-4 py-2 rounded hover:bg-white hover:text-blue-600 transition">
-          SignUp
-        </Link>
-        </div>
-      </nav>
+      <Navbar2/>
 
       {/* Hero Section */}
       <div className="flex flex-col md:flex-row items-center justify-between px-8 py-16 not-odd:">
