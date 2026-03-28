@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Navbar from "../components/Navbar";
 
 const Profile = () => {
   const [darkMode, setDarkMode] = useState(false);
@@ -6,6 +7,7 @@ const Profile = () => {
   return (
     <div className={`${darkMode ? "bg-gray-900 text-white" : "bg-gray-100"} min-h-screen p-6`}>
       <div className="max-w-6xl mx-auto space-y-6">
+        <Navbar/>
 
         {/* HEADER */}
         <div className="flex justify-between items-center">

@@ -1,8 +1,15 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/login");
+  }
 
   return (
     <nav className=" text-black bg-gray-50">
@@ -15,10 +22,10 @@ function Navbar() {
 
           {/* Desktop Links */}
           <div className="hidden md:flex space-x-6">
-            <Link to="/my-vault" className="hover:text-blue-200">My Vault</Link>
+            <Link to="/Vault" className="hover:text-blue-200">My Vault</Link>
             <Link to="/shared-with-me" className="hover:text-blue-200">Shared With Me</Link>
             <Link to="/Profile" className="hover:text-blue-200">Profile</Link>
-            <button className="hover:text-blue-200">Logout</button>
+            <button className="hover:text-blue-200" onClick={handleLogout}>Logout</button>
           </div>
 
           {/* Mobile Hamburger */}

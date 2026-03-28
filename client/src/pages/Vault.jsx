@@ -1,9 +1,10 @@
-import React, { useState, useEffect,useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Navbar from '../components/Navbar.jsx'
 import TableRow from '../components/TableRow.jsx'
 import FolderHeader from '../components/FolderHeader.jsx'
 import axios from "axios";
 import { toast } from "react-toastify";
+import './loader.css'
 const Vault = () => {
     // const files = [
     //     { type: 'folder', name: 'Projects', owner: 'Garvit', size: '1 KB', date: 'Mar 21, 2026' },
@@ -260,7 +261,9 @@ const Vault = () => {
         setCurrentFolder(prev);
     };
 
-    if (!currentFolder) return <div>Loading...</div>;
+    if (!currentFolder) return <div className="max-w-screen h-screen flex justify-center items-center">
+        <div className="loader"></div>
+    </div>;
 
 
     // Handle refresh
@@ -415,7 +418,7 @@ const Vault = () => {
 
             {/* File explorer */}
             <div ref={containerRef}
-    className="w-full mx-auto mt-2 px-0 bg-white h-[80vh] overflow-y-auto">
+                className="w-full mx-auto mt-2 px-0 bg-white h-[80vh] overflow-y-auto">
                 {/* <div className="w-full mx-auto mt-2 px-0 bg-yellow-500 h-[80vh] overflow-y-auto pb-10"></div>                 */}
                 <div className="flex px-10 py-2 font-semibold text-gray-600 sticky top-0 z-10 bg-white">
                     <div className="flex-1">Name</div>
@@ -459,7 +462,7 @@ const Vault = () => {
                             name={file.name}
                             owner={"You"}
                             size={file.size}
-                            
+
                         />
                     ))}
                 </div>

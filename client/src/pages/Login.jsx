@@ -2,12 +2,14 @@ import React, { useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import { FaFacebookF, FaTwitter, FaGoogle } from "react-icons/fa";
 import { toast } from "react-toastify";
-
+import { useNavigate } from 'react-router-dom';
 const Login = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   })
+
+  const navigate = useNavigate();
 
   const handleChange = (event) => {
     setFormData(
@@ -42,6 +44,9 @@ const Login = () => {
         })
 
         // create user storage if not exist
+
+        // Navigate to vault
+        navigate("/Vault");
       }
       else{
         toast.error(data.message);
