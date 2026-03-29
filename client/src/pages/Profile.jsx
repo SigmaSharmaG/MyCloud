@@ -71,11 +71,9 @@ const Profile = () => {
 
         {/* RECENT ACTIVITY */}
         <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow">
-          <h3 className="font-semibold mb-4">Recent Activity</h3>
+          <h3 className="font-semibold mb-4">Current Subscrpition</h3>
           <ul className="space-y-2 text-sm">
-            <li>📁 Uploaded "resume.pdf" – 2 hrs ago</li>
-            <li>🗑 Deleted "photo.png" – yesterday</li>
-            <li>🔗 Shared "project.zip" – 3 days ago</li>
+            <li> plans -current plan </li>
           </ul>
         </div>
 
