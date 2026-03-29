@@ -58,6 +58,12 @@ const Vault = () => {
         )
         : currentFolder?.files || [];
 
+    const [activeMenu, setActiveMenu] = useState(null);
+
+    const handleMoreOptions = (id) => {
+        setActiveMenu(prev => (prev === id ? null : id));
+    };
+
     const getAllFiles = (folder) => {
         let allFiles = [...folder.files];
 
@@ -238,6 +244,17 @@ const Vault = () => {
         };
 
         loadData();
+    }, []);
+
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (!e.target.closest(".menu-container")) {
+                setActiveMenu(null);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
     // useEffect(() => {
@@ -524,76 +541,60 @@ const Vault = () => {
                 </div>
                 <div className="mb-10 pb-20">
 
-                    {/* {files.map((file, index) => (
-                    <TableRow
-                        key={index}
-                        type={file.type}
-                        name={file.name}
-                        owner={file.owner}
-                        size={file.size}
-                        date={file.date}
-                    />
-                ))} */}
-
-                    {/* {
-                        (filteredFolders!=null && filteredFolders.map((folder) => (
-                            <TableRow
-                                key={folder.path}
-                                path={folder.path}
-                                type="folder"
-                                name={folder.name}
-                                owner="You"
-                                openFolder={() => openFolder(folder.path)}
-                            />
-                        )))
-                    } */}
-
-                    {/* {
-                        (filteredFolders.length > 0 ? console.log("Display") : console.log("DND"))
-                    } */}
 
                     {
-                        activeSearch!="" && filteredFolders.map((folder) => (
+                        activeSearch != "" && filteredFolders.map((folder) => (
                             <TableRow
                                 key={folder.path}
+                                id={folder.path}
                                 path={folder.path}
                                 type="folder"
                                 name={folder.name}
                                 owner="You"
                                 openFolder={() => openFolder(folder.path)}
+                                activeMenu={activeMenu}
+                                handleMoreOptions={handleMoreOptions}
+                                
                             />
                         ))
 
-                        
-                        
+
+
                     }
                     {
-                        activeSearch!="" && filteredFiles.map((file) => (
+                        activeSearch != "" && filteredFiles.map((file) => (
                             <TableRow
                                 key={file.path}
                                 name={file.name}
+                                id={file.path}
+                                path={file.path}
                                 owner={"You"}
                                 size={file.size}
                                 type={file.type}
+                                activeMenu={activeMenu}
+                                handleMoreOptions={handleMoreOptions}
                             />
                         ))
 
-                        
-                        
+
+
                     }
-                    
+
 
 
 
                     {/*Folders*/}
-                    {activeSearch=="" && currentFolder.folders.map((folder) => (
+                    {activeSearch == "" && currentFolder.folders.map((folder) => (
                         <TableRow
                             key={folder.path}
+                            id={folder.path}
                             path={folder.path}
                             type="folder"
                             name={folder.name}
                             owner={"You"}
                             openFolder={() => openFolder(folder.path)}
+                            activeMenu={activeMenu}
+                            handleMoreOptions={handleMoreOptions}
 
                         />
                     ))}
@@ -601,13 +602,17 @@ const Vault = () => {
                     {/*Files */}
 
                     {/* {console.log(currentFolder.files)} */}
-                    {activeSearch=="" && currentFolder.files.map((file) => (
+                    {activeSearch == "" && currentFolder.files.map((file) => (
                         <TableRow
                             key={file.path}
+                            id={file.path}
+                            path={file.path}
                             type={file.type}
                             name={file.name}
                             owner={"You"}
                             size={file.size}
+                            activeMenu={activeMenu}
+                            handleMoreOptions={handleMoreOptions}
 
                         />
                     ))}
