@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, use } from "react";
 import Navbar from '../components/Navbar.jsx'
 import TableRow from '../components/TableRow.jsx'
 import FolderHeader from '../components/FolderHeader.jsx'
@@ -13,7 +13,8 @@ const Vault = () => {
     // ];
 
     const [searchQuery, setSearchQuery] = useState("");
-    const folderName = "Documents"; // dynamic later
+    const [activeSearch, setActiveSearch] = useState("");
+    const [folderName, setFolderName] = useState(""); // dynamic later
     const [addFolder, setAddFolder] = useState(false);
     const [newFolderName, setNewFolderName] = useState("");
 
@@ -26,6 +27,37 @@ const Vault = () => {
 
     const containerRef = useRef(null);
 
+    // const [filteredFolders,setFilteredFolder] = useState([]);
+
+
+    // if (activeSearch!=""){
+    //     console.log(activeSearch)
+    //     const query = activeSearch.toLowerCase();
+    //     const Folders = currentFolder.folders.filter(folder =>
+    //     folder.name.toLowerCase().includes(query)
+    // );
+    //     setFilteredFolder(Folders);
+    //     console.log("Filtered folder ",filteredFolders);
+    // }
+
+    // const filteredFiles = currentFolder.files.filter(file =>
+    //     file.name.toLowerCase().includes(query)
+    // );
+
+    const query = activeSearch.toLowerCase();
+
+    const filteredFolders = activeSearch !== ""
+        ? (currentFolder?.folders || []).filter(folder =>
+            folder.name.toLowerCase().includes(query)
+        )
+        : currentFolder?.folders || [];
+
+    const filteredFiles = activeSearch !== ""
+        ? (currentFolder?.files || []).filter(file =>
+            file.name.toLowerCase().includes(query)
+        )
+        : currentFolder?.files || [];
+
     const getAllFiles = (folder) => {
         let allFiles = [...folder.files];
 
@@ -36,9 +68,9 @@ const Vault = () => {
         return allFiles;
     };
 
-    const handleFileLoad = async () => {
+    const handleFileLoad = async (folderPath) => {
         try {
-            const path = '';
+            const path = '' || folderPath;
             const token = localStorage.getItem("token"); // 🔥 get token
 
             const res = await axios.get(
@@ -50,7 +82,7 @@ const Vault = () => {
                     }
                 }
             );
-            console.log("Hello", res.data)
+            // console.log("Hello", res.data)
 
             return res.data;
         } catch (err) {
@@ -250,15 +282,62 @@ const Vault = () => {
     //     setFiles(allFiles);
     // }, []);
 
-    const openFolder = (folder) => {
-        setHistory([...history, currentFolder]);
-        setCurrentFolder(folder);
+    const openFolder = (path) => {
+        console.log("Opening folder", path);
+        const loadData = async (path) => {
+            const data = await handleFileLoad(path);
+
+            setRoot(data);
+            setCurrentFolder(data);
+            setHistory([...history, path]);
+            // setHistory(prev => [...prev, path]);
+            setFolderName(path)
+
+
+        };
+
+        loadData(path);
+
+        // setCurrentFolder(folder);
     };
 
     const goBack = () => {
-        const prev = history[history.length - 1];
+        console.log("Moving back")
+        const prev = history[history.length - 2];
+        console.log(prev)
         setHistory(history.slice(0, -1));
-        setCurrentFolder(prev);
+        console.log(history);
+        // // setCurrentFolder(prev);
+
+        const loadData = async (path) => {
+            const data = await handleFileLoad(path);
+
+            setRoot(data);
+            setCurrentFolder(data);
+            // setHistory([...history,path]);
+            setFolderName(path)
+
+
+        };
+
+        loadData(prev);
+
+        // if (history.length === 0) return; // safety
+
+        // const prev = history[history.length - 1];
+
+        // // remove last item FIRST
+        // setHistory(prevHistory => prevHistory.slice(0, -1));
+
+        // // load previous folder
+        // const loadData = async (prev) => {
+        //     const data = await handleFileLoad(prev);
+
+        //     setRoot(data);
+        //     setCurrentFolder(data);
+        //     setFolderName(prev);
+        // }
+        // loadData(prev);
     };
 
     if (!currentFolder) return <div className="max-w-screen h-screen flex justify-center items-center">
@@ -271,7 +350,7 @@ const Vault = () => {
         console.log("Refreshing data...");
         // call API again here
         const loadData = async () => {
-            const data = await handleFileLoad();
+            const data = await handleFileLoad(folderName);
 
             setRoot(data);
             setCurrentFolder(data);
@@ -283,18 +362,31 @@ const Vault = () => {
         console.log("After refresh", currentFolder)
     };
 
+    // Helps to reset the vault to root
+    const resetVault = () => {
+        console.log("Resetingg")
+        const loadData = async () => {
+            const data = await handleFileLoad("");
+
+            setRoot(data);
+            setCurrentFolder(data);
+            setFolderName("My Vault")
 
 
+        };
+
+        loadData();
+    }
 
     // Handles new folder creation
     const handleAddFolder = async () => {
         try {
             const token = localStorage.getItem("token");
             console.log(token);
-            const folderPath = "";
+            const path = "" || folderName;
 
             const res = await axios.post("http://localhost:4000/api/files/createFolder", {
-                folderPath: "", // or dynamic
+                folderPath: path, // or dynamic
                 folderName: newFolderName
             }, {
                 headers: {
@@ -333,12 +425,13 @@ const Vault = () => {
 
         const formData = new FormData();
         formData.append("file", file);
+        const path = "" || folderName
 
         try {
             const token = localStorage.getItem("token");
             console.log(token);
             const res = await axios.post(
-                "http://localhost:4000/api/upload/file?folderPath=",
+                `http://localhost:4000/api/upload/file?folderPath=${path}`,
                 formData,
                 {
                     headers: {
@@ -360,13 +453,15 @@ const Vault = () => {
 
     return (
         <div className="h-screen overflow-hidden">
-            <Navbar />
+            <Navbar resetVault={resetVault} />
 
             <div className="p-4">
                 <FolderHeader
+                    previous={goBack}
                     folderName={folderName}
                     searchQuery={searchQuery}
                     setSearchQuery={setSearchQuery}
+                    setActiveSearch={setActiveSearch}
                     onRefresh={handleRefresh}
                     onUpload={handleUpload}
                     onAddFolder={displayNewFolderModal}
@@ -440,22 +535,73 @@ const Vault = () => {
                     />
                 ))} */}
 
-                    {/*Folders FIRST */}
-                    {currentFolder.folders.map((folder) => (
+                    {/* {
+                        (filteredFolders!=null && filteredFolders.map((folder) => (
+                            <TableRow
+                                key={folder.path}
+                                path={folder.path}
+                                type="folder"
+                                name={folder.name}
+                                owner="You"
+                                openFolder={() => openFolder(folder.path)}
+                            />
+                        )))
+                    } */}
+
+                    {/* {
+                        (filteredFolders.length > 0 ? console.log("Display") : console.log("DND"))
+                    } */}
+
+                    {
+                        activeSearch!="" && filteredFolders.map((folder) => (
+                            <TableRow
+                                key={folder.path}
+                                path={folder.path}
+                                type="folder"
+                                name={folder.name}
+                                owner="You"
+                                openFolder={() => openFolder(folder.path)}
+                            />
+                        ))
+
+                        
+                        
+                    }
+                    {
+                        activeSearch!="" && filteredFiles.map((file) => (
+                            <TableRow
+                                key={file.path}
+                                name={file.name}
+                                owner={"You"}
+                                size={file.size}
+                                type={file.type}
+                            />
+                        ))
+
+                        
+                        
+                    }
+                    
+
+
+
+                    {/*Folders*/}
+                    {activeSearch=="" && currentFolder.folders.map((folder) => (
                         <TableRow
                             key={folder.path}
+                            path={folder.path}
                             type="folder"
                             name={folder.name}
                             owner={"You"}
-                            onClick={() => openFolder(folder)}
+                            openFolder={() => openFolder(folder.path)}
 
                         />
                     ))}
 
                     {/*Files */}
 
-                    {console.log(currentFolder.files)}
-                    {currentFolder.files.map((file) => (
+                    {/* {console.log(currentFolder.files)} */}
+                    {activeSearch=="" && currentFolder.files.map((file) => (
                         <TableRow
                             key={file.path}
                             type={file.type}

@@ -1,11 +1,11 @@
 import React from 'react';
 import { FaFolder, FaFileAlt, FaEllipsisV } from 'react-icons/fa';
 
-const TableRow = ({ type, name, owner,size, date }) => {
+const TableRow = ({ path,type, name, owner,size, date,openFolder }) => {
   return (
     <div className="flex items-center px-10 py-3 even:bg-gray-100 odd:bg-white hover:bg-gray-200 transition-colors rounded-xs">
       {/* Name + Icon */}
-      <div className="flex-1 flex items-center gap-3">
+      <div className="flex-1 flex items-center gap-3 cursor-pointer" onClick={type=='folder' ? openFolder : 0}>
         {type === 'folder' ? (
           <FaFolder className="text-yellow-500 text-xl" />
         ) : (

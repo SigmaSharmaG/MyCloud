@@ -2,13 +2,13 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
-function Navbar() {
+function Navbar({resetVault}) {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    navigate("/login");
+    navigate("/home");
   }
 
   return (
@@ -22,7 +22,7 @@ function Navbar() {
 
           {/* Desktop Links */}
           <div className="hidden md:flex space-x-6">
-            <Link to="/Vault" className="hover:text-blue-200">My Vault</Link>
+            <Link to="/Vault" className="hover:text-blue-200" onClick={resetVault}>My Vault</Link>
             <Link to="/shared-with-me" className="hover:text-blue-200">Shared With Me</Link>
             <Link to="/Profile" className="hover:text-blue-200">Profile</Link>
             <button className="hover:text-blue-200" onClick={handleLogout}>Logout</button>
